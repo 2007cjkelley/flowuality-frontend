@@ -1,0 +1,278 @@
+/* Landing page. Everything here is scoped under .landing and reads its values
+   from the --lp-* tokens below, which start out matching the app's current
+   auth-screen look (slate background, Inter, blue/indigo accents). A reskin
+   edits the tokens; the structure rules underneath shouldn't need to change. */
+
+.landing {
+  /* Color */
+  --lp-bg: #0f172a;
+  --lp-surface: #1e293b;
+  --lp-border: #334155;
+  --lp-text: #f1f5f9;
+  --lp-text-muted: #94a3b8;
+  --lp-accent: #6366f1;
+  --lp-accent-hover: #818cf8;
+  --lp-accent-text: #ffffff;
+  --lp-link: #60a5fa;
+  --lp-caption-reveal: #818cf8;
+
+  /* Type */
+  --lp-font: 'Inter', -apple-system, BlinkMacSystemFont, "Segoe UI", "Roboto", sans-serif;
+  --lp-headline-size: clamp(2rem, 5vw, 3.5rem);
+  --lp-subhead-size: clamp(1rem, 2vw, 1.25rem);
+  --lp-caption-size: clamp(1.375rem, 3vw, 2rem);
+  --lp-body-size: 0.9375rem;
+  --lp-headline-weight: 700;
+
+  /* Shape & spacing */
+  --lp-radius: 12px;
+  --lp-button-radius: 8px;
+  --lp-max-width: 1120px;
+  --lp-gutter: 16px;
+  --lp-section-gap: clamp(64px, 10vw, 128px);
+  --lp-caption-fade: 350ms;
+
+  min-height: 100vh;
+  background: var(--lp-bg);
+  color: var(--lp-text);
+  font-family: var(--lp-font);
+  font-size: var(--lp-body-size);
+  line-height: 1.5;
+  overflow-x: hidden;
+}
+
+.landing *,
+.landing *::before,
+.landing *::after {
+  box-sizing: border-box;
+}
+
+/* :where() keeps this reset at zero specificity, so any single class below
+   can still set its own margin. */
+:where(.landing) :where(p, h1, h2) {
+  margin: 0;
+}
+
+.landing-visually-hidden {
+  position: absolute;
+  width: 1px;
+  height: 1px;
+  overflow: hidden;
+  clip: rect(0 0 0 0);
+  white-space: nowrap;
+}
+
+/* ── Top bar ───────────────────────────────── */
+.landing-topbar {
+  max-width: var(--lp-max-width);
+  margin: 0 auto;
+  padding: 20px var(--lp-gutter);
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 16px;
+}
+
+.landing-wordmark {
+  color: var(--lp-text);
+  font-weight: 700;
+  font-size: 1.125rem;
+  text-decoration: none;
+}
+
+.landing-auth-links {
+  display: flex;
+  align-items: center;
+  gap: 16px;
+}
+
+.landing-link {
+  color: var(--lp-link);
+  text-decoration: none;
+  font-weight: 500;
+}
+
+.landing-link:hover {
+  text-decoration: underline;
+}
+
+/* ── Buttons ───────────────────────────────── */
+.landing-button {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  padding: 10px 18px;
+  border-radius: var(--lp-button-radius);
+  font-weight: 600;
+  text-decoration: none;
+  transition: background-color 0.15s ease, border-color 0.15s ease;
+}
+
+.landing-button-primary {
+  background: var(--lp-accent);
+  color: var(--lp-accent-text);
+  padding: 14px 28px;
+  font-size: 1rem;
+}
+
+.landing-button-primary:hover {
+  background: var(--lp-accent-hover);
+}
+
+.landing-button-secondary {
+  border: 1px solid var(--lp-border);
+  color: var(--lp-text);
+}
+
+.landing-button-secondary:hover {
+  border-color: var(--lp-text-muted);
+}
+
+/* ── Hero header ───────────────────────────── */
+.landing-hero {
+  max-width: 860px;
+  margin: 0 auto;
+  padding: clamp(40px, 8vw, 96px) var(--lp-gutter) var(--lp-section-gap);
+  text-align: center;
+}
+
+.landing-headline {
+  font-size: var(--lp-headline-size);
+  font-weight: var(--lp-headline-weight);
+  line-height: 1.1;
+  letter-spacing: -0.02em;
+}
+
+.landing-subhead {
+  margin-top: 20px;
+  font-size: var(--lp-subhead-size);
+  color: var(--lp-text-muted);
+}
+
+.landing-cta-row {
+  margin-top: 32px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-wrap: wrap;
+  gap: 12px 16px;
+}
+
+.landing-cta-note {
+  color: var(--lp-text-muted);
+  font-size: 0.875rem;
+}
+
+/* ── Problem → reveal sections ─────────────── */
+.landing-reveals {
+  max-width: var(--lp-max-width);
+  margin: 0 auto;
+  padding: 0 var(--lp-gutter);
+  display: flex;
+  flex-direction: column;
+  gap: var(--lp-section-gap);
+}
+
+.landing-reveal {
+  display: grid;
+  grid-template-columns: minmax(0, 2fr) minmax(0, 3fr);
+  align-items: center;
+  gap: clamp(24px, 5vw, 64px);
+}
+
+/* Every other section puts its video on the left. :nth-child, not an index
+   prop, so a section hidden for lack of a video doesn't break the alternation. */
+.landing-reveal:nth-child(even) {
+  grid-template-columns: minmax(0, 3fr) minmax(0, 2fr);
+}
+
+.landing-reveal:nth-child(even) .landing-reveal-caption {
+  order: 2;
+}
+
+/* Both caption lines occupy the same grid cell and crossfade, so the section
+   never changes height when the caption flips. */
+.landing-caption-stack {
+  display: grid;
+}
+
+.landing-caption-stack > .landing-caption-line {
+  grid-area: 1 / 1;
+  opacity: 0;
+  transition: opacity var(--lp-caption-fade) ease;
+}
+
+.landing-caption-stack > .landing-caption-line.is-active {
+  opacity: 1;
+}
+
+.landing-caption-line {
+  font-size: var(--lp-caption-size);
+  font-weight: 600;
+  line-height: 1.25;
+}
+
+.landing-caption-reveal {
+  color: var(--lp-caption-reveal);
+}
+
+.landing-caption-static + .landing-caption-static {
+  margin-top: 12px;
+}
+
+.landing-reveal-media {
+  border: 1px solid var(--lp-border);
+  border-radius: var(--lp-radius);
+  overflow: hidden;
+  background: var(--lp-surface);
+  /* Per-video override set inline from heroSections.js's aspectRatio. */
+  aspect-ratio: var(--lp-media-aspect, 16 / 10);
+}
+
+.landing-video {
+  display: block;
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+}
+
+/* ── Closing CTA + footer ──────────────────── */
+.landing-closing {
+  max-width: 860px;
+  margin: 0 auto;
+  padding: var(--lp-section-gap) var(--lp-gutter);
+  text-align: center;
+}
+
+.landing-closing-title {
+  font-size: clamp(1.5rem, 3.5vw, 2.25rem);
+  font-weight: var(--lp-headline-weight);
+}
+
+.landing-footer {
+  max-width: var(--lp-max-width);
+  margin: 0 auto;
+  padding: 24px var(--lp-gutter) 40px;
+  border-top: 1px solid var(--lp-border);
+  display: flex;
+  justify-content: space-between;
+  color: var(--lp-text-muted);
+  font-size: 0.875rem;
+}
+
+/* ── Phone width ───────────────────────────── */
+@media (max-width: 720px) {
+  .landing-reveal,
+  .landing-reveal:nth-child(even) {
+    grid-template-columns: minmax(0, 1fr);
+  }
+
+  /* Caption above the video on a phone regardless of desktop alternation. */
+  .landing-reveal:nth-child(even) .landing-reveal-caption {
+    order: 0;
+  }
+
+  .landing-reveal-caption {
+    text-align: center;
+  }
+}
